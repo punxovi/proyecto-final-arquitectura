@@ -25,5 +25,14 @@ jobs:
         run: python -m pytest -q
       - name: Construir imagen Docker
         run: docker build -t pedidofacil:ci .
+      - name: Escanear imagen Docker
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: pedidofacil:ci
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: os,library
+          severity: CRITICAL,HIGH
       - name: Validar importación de la API
         run: python -c "from app.main import app; print(app.title)"

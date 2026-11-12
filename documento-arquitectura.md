@@ -252,7 +252,9 @@ El pipeline de GitHub Actions ejecuta:
 2. configuración de Python 3.12;
 3. instalación reproducible de dependencias;
 4. ejecución de cuatro pruebas automatizadas;
-5. validación de importación y arranque lógico de la API.
+5. construcción de la imagen Docker;
+6. escaneo de vulnerabilidades críticas y altas con Trivy;
+7. validación de importación y arranque lógico de la API.
 
 La evidencia se obtiene desde la pestaña **Actions** del repositorio: ejecución verde, resumen de pasos y salida de `pytest`. Para completar una demostración, se recomienda adjuntar una captura de una ejecución exitosa y otra ejecución fallida corregida.
 
