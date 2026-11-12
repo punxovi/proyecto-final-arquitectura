@@ -1,0 +1,18 @@
+sequenceDiagram
+    actor Operador
+    participant API as API REST
+    participant Service as OrderService
+    participant Repo as OrderRepository
+    participant Events as Event Bus
+    participant Notif as Notification Adapter
+    Operador->>API: PATCH /orders/{id}/status
+    API->>Service: updateStatus(id, status)
+    Service->>Repo: findById(id)
+    Repo-->>Service: pedido
+    Service->>Service: Validar transición
+    Service->>Repo: save(pedido actualizado)
+    Service->>Events: OrderStatusChanged
+    Events-->>Notif: entregar evento
+    Notif-->>Operador: notificación al cliente
+    Service-->>API: pedido actualizado
+    API-->>Operador: 200 OK

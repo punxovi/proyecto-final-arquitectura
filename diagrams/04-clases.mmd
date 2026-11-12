@@ -1,0 +1,25 @@
+classDiagram
+    class Order {
+      +UUID id
+      +OrderStatus status
+      +Money total
+      +confirm()
+      +changeStatus()
+    }
+    class OrderItem {
+      +int quantity
+      +Money unitPrice
+      +subtotal()
+    }
+    class Product { +UUID id +String name +Money price }
+    class Customer { +UUID id +String name +String email }
+    class OrderService { +createOrder() +updateStatus() }
+    class OrderRepository { +save(order) +findById(id) +findAll() }
+    class NotificationAdapter { +notifyStatusChanged(event) }
+    class PricingStrategy { <<interface>> +calculate(items) }
+    Order "1" *-- "1..*" OrderItem
+    OrderItem --> Product
+    Order --> Customer
+    OrderService --> OrderRepository
+    OrderService --> NotificationAdapter
+    OrderService --> PricingStrategy

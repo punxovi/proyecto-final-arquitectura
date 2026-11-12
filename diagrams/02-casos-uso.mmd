@@ -1,0 +1,11 @@
+flowchart LR
+    C[Cliente] --> UC1((Registrar pedido))
+    C --> UC2((Consultar pedido))
+    C --> UC3((Recibir notificación))
+    O[Operador] --> UC2
+    O --> UC4((Confirmar pedido))
+    O --> UC5((Actualizar estado))
+    A[Administrador] --> UC6((Gestionar productos))
+    A --> UC7((Gestionar usuarios))
+    UC4 -. incluye .-> UC5
+    UC5 -. dispara .-> UC3

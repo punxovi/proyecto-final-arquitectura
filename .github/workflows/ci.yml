@@ -1,0 +1,27 @@
+name: CI PedidoFácil
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+      - name: Ejecutar pruebas
+        run: pytest -q
+      - name: Construir imagen Docker
+        run: docker build -t pedidofacil:ci .
+      - name: Validar importación de la API
+        run: python -c "from app.main import app; print(app.title)"

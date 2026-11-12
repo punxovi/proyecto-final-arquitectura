@@ -1,0 +1,1 @@
+"""Componente mínimo de PedidoFácil."""

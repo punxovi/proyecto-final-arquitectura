@@ -1,0 +1,13 @@
+flowchart TB
+    Browser[Navegador] --> CDN[CDN / Reverse Proxy]
+    CDN --> API1[Contenedor API 1]
+    CDN --> API2[Contenedor API 2]
+    API1 --> DB[(PostgreSQL administrado)]
+    API2 --> DB
+    API1 --> Queue[Cola opcional]
+    API2 --> Queue
+    Queue --> Worker[Worker de notificaciones]
+    Worker --> External[Proveedor externo]
+    CI[GitHub Actions] --> Registry[Container Registry]
+    Registry --> API1
+    Registry --> API2

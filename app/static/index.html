@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PedidoFácil</title>
+  <style>
+    :root { font-family: Arial, sans-serif; color: #3D3935; background: #f7f7f6; }
+    body { max-width: 1000px; margin: 0 auto; padding: 32px 18px; }
+    h1 { margin-bottom: 4px; color: #DA291C; }
+    .subtitle { margin-top: 0; color: #3D3935; }
+    .grid { display: grid; grid-template-columns: minmax(280px, 360px) 1fr; gap: 20px; align-items: start; }
+    .card { background: white; border: 1px solid #d8d5d2; border-radius: 12px; padding: 20px; box-shadow: 0 4px 14px #3D393520; }
+    label { display: block; font-weight: 700; margin: 12px 0 6px; }
+    input, button, select { width: 100%; box-sizing: border-box; padding: 10px; border-radius: 8px; border: 1px solid #b8b3af; font-size: 14px; }
+    button { margin-top: 14px; border: 0; color: white; background: #DA291C; cursor: pointer; font-weight: 700; }
+    button:hover { background: #b82016; }
+    .secondary { background: #3D3935; }
+    .message { min-height: 22px; margin-top: 12px; font-weight: 700; }
+    .order { border-top: 1px solid #e5eaf2; padding: 14px 0; }
+    .order:first-child { border-top: 0; padding-top: 0; }
+    .order strong { color: #1d4ed8; }
+    .meta { color: #3D3935; font-size: 13px; margin: 5px 0; }
+    .status { display: inline-block; background: #fbe2df; color: #DA291C; padding: 4px 8px; border-radius: 99px; font-size: 12px; font-weight: 700; }
+    @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <h1>PedidoFácil</h1>
+  <p class="subtitle">Demo local de gestión de pedidos</p>
+
+  <main class="grid">
+    <section class="card">
+      <h2>Nuevo pedido</h2>
+      <form id="order-form">
+        <label for="customer">Cliente</label>
+        <input id="customer" required minlength="2" placeholder="Nombre del cliente">
+        <label for="product">Producto</label>
+        <input id="product" required placeholder="Ej. Café">
+        <label for="price">Precio unitario</label>
+        <input id="price" required type="number" min="1" step="1" placeholder="1500">
+        <label for="quantity">Cantidad</label>
+        <input id="quantity" required type="number" min="1" step="1" value="1">
+        <button type="submit">Crear pedido</button>
+      </form>
+      <p id="message" class="message"></p>
+    </section>
+
+    <section class="card">
+      <h2>Pedidos registrados</h2>
+      <button class="secondary" id="refresh">Actualizar lista</button>
+      <div id="orders" style="margin-top: 18px"></div>
+    </section>
+  </main>
+
+  <script>
+    const orders = document.querySelector('#orders');
+    const message = document.querySelector('#message');
+
+    async function loadOrders() {
+      const response = await fetch('/api/orders');
+      const data = await response.json();
+      if (!data.length) {
+        orders.innerHTML = '<p class="meta">Todavía no hay pedidos.</p>';
+        return;
+      }
+      orders.innerHTML = data.map(order => `
+        <article class="order">
+          <strong>${order.customer_name}</strong>
+          <span class="status">${order.status}</span>
+          <p class="meta">${order.items.map(item => `${item.quantity} × ${item.name}`).join(', ')}</p>
+          <p><b>Total:</b> $${order.total.toLocaleString('es-CL')}</p>
+          <select data-id="${order.id}" aria-label="Estado del pedido">
+            ${['PENDIENTE','CONFIRMADO','EN_PREPARACION','LISTO','ENTREGADO','CANCELADO'].map(s => `<option ${s === order.status ? 'selected' : ''}>${s}</option>`).join('')}
+          </select>
+        </article>`).join('');
+      document.querySelectorAll('select[data-id]').forEach(select => {
+        select.addEventListener('change', () => changeStatus(select.dataset.id, select.value));
+      });
+    }
+
+    async function changeStatus(id, newStatus) {
+      await fetch(`/api/orders/${id}/status?new_status=${encodeURIComponent(newStatus)}`, { method: 'PATCH' });
+      await loadOrders();
+    }
+
+    document.querySelector('#order-form').addEventListener('submit', async event => {
+      event.preventDefault();
+      const body = {
+        customer_name: document.querySelector('#customer').value,
+        items: [{
+          product_id: 'DEMO-1',
+          name: document.querySelector('#product').value,
+          quantity: Number(document.querySelector('#quantity').value),
+          unit_price: Number(document.querySelector('#price').value)
+        }]
+      };
+      const response = await fetch('/api/orders', {
+        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)
+      });
+      if (response.ok) {
+        message.textContent = 'Pedido creado correctamente.';
+        message.style.color = '#15803d';
+        event.target.reset();
+        document.querySelector('#quantity').value = 1;
+        await loadOrders();
+      } else {
+        message.textContent = 'No se pudo crear el pedido.';
+        message.style.color = '#b91c1c';
+      }
+    });
+
+    document.querySelector('#refresh').addEventListener('click', loadOrders);
+    loadOrders();
+  </script>
+</body>
+</html>

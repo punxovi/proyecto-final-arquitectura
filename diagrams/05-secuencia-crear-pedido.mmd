@@ -1,0 +1,16 @@
+sequenceDiagram
+    actor Cliente
+    participant API as API REST
+    participant Service as OrderService
+    participant Repo as OrderRepository
+    participant DB as PostgreSQL
+    Cliente->>API: POST /api/orders
+    API->>API: Validar contrato
+    API->>Service: createOrder(data)
+    Service->>Service: Calcular total y estado inicial
+    Service->>Repo: save(order)
+    Repo->>DB: INSERT pedido
+    DB-->>Repo: id creado
+    Repo-->>Service: pedido persistido
+    Service-->>API: pedido
+    API-->>Cliente: 201 Created

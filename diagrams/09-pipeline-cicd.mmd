@@ -1,0 +1,8 @@
+flowchart LR
+    Commit[Push / Pull Request] --> Checkout[Checkout]
+    Checkout --> Install[Instalar dependencias]
+    Install --> Test[pytest]
+    Test --> Build[Construir imagen o paquete]
+    Build --> Security[Escaneo de dependencias]
+    Security --> Deploy[Entrega a staging]
+    Deploy --> Evidence[Reporte y evidencia]

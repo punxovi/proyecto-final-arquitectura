@@ -1,0 +1,8 @@
+flowchart LR
+    Cliente[Cliente] -->|HTTPS/REST| PF((PedidoFácil))
+    Operador[Operador] -->|HTTPS/REST| PF
+    Admin[Administrador] -->|HTTPS/REST| PF
+    PF -->|consulta/autorización| Identidad[Proveedor de identidad]
+    PF -->|persistencia| DB[(PostgreSQL)]
+    PF -->|pago opcional| Pago[Servicio de pagos]
+    PF -->|notificaciones| Notif[Correo / mensajería]

@@ -1,0 +1,10 @@
+flowchart TB
+    UI[Web UI] --> API[API REST / FastAPI]
+    API --> APP[Order Application Service]
+    APP --> DOMAIN[Dominio: Order, Product, Customer]
+    APP --> REPO[OrderRepository]
+    REPO --> DB[(PostgreSQL)]
+    APP --> AUTH[Identity Adapter]
+    APP --> PAY[Payment Adapter]
+    APP --> NOTIF[Notification Adapter]
+    NOTIF --> EMAIL[Proveedor de mensajería]

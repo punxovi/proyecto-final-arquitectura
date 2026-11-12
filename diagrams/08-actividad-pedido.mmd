@@ -1,0 +1,16 @@
+flowchart TD
+    A([Inicio]) --> B[Cliente ingresa productos]
+    B --> C{¿Datos válidos?}
+    C -- No --> D[Mostrar errores]
+    D --> B
+    C -- Sí --> E[Calcular total]
+    E --> F[Crear pedido PENDIENTE]
+    F --> G{¿Pago requerido?}
+    G -- Sí --> H[Solicitar autorización de pago]
+    H --> I{¿Pago aprobado?}
+    I -- No --> J[Cancelar pedido]
+    I -- Sí --> K[Confirmar pedido]
+    G -- No --> K
+    K --> L[Preparar y entregar]
+    L --> M([Fin])
+    J --> M
