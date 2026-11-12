@@ -9,6 +9,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: .
     steps:
       - name: Descargar código
         uses: actions/checkout@v4
@@ -20,7 +22,7 @@ jobs:
       - name: Instalar dependencias
         run: pip install -r requirements.txt
       - name: Ejecutar pruebas
-        run: pytest -q
+        run: python -m pytest -q
       - name: Construir imagen Docker
         run: docker build -t pedidofacil:ci .
       - name: Validar importación de la API
