@@ -26,7 +26,7 @@ jobs:
       - name: Construir imagen Docker
         run: docker build -t pedidofacil:ci .
       - name: Escanear imagen Docker
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: pedidofacil:ci
           format: table
